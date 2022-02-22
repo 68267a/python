@@ -1,5 +1,9 @@
 import pygame
 
+pygame.font.init()
+pygame.font.get_init()
+pygame.time.Clock().tick(30)
+
 screensize = 320,320
 width, height = screensize
 
@@ -12,122 +16,102 @@ BLUE = (0, 0, 255)      # O
 GREEN = (0, 255, 0)     # Win
 
 boxsize = 100,100
-box1 = 5,5
-box2 = 110,5
-box3 = 215,5
-box4 = 5,110
-box5 = 110,110
-box6 = 215,110
-box7 = 5,215
-box8 = 110,215
-box9 = 215,215
-boardline1 = [106,0],[106,320]
-boardline2 = [211,0],[211,320]
-boardline3 = [0,107],[320,107]
-boardline4 = [0,212],[320,212]
+boxes = [[0,0],#dummy box
+	[5,5],[110,5],[215,5],
+	[5,110],[110,110],[215,110],
+	[5,215],[110,215],[215,215]
+]
+boardlines = [
+	[[106,0],[106,320]],
+	[[211,0],[211,320]],
+	[[0,107],[320,107]],
+	[[0,212],[320,212]]
+]
+solutions = [
+	[1,2,3],[4,5,6],[7,8,9], #horizontals
+	[1,4,7],[2,5,8],[3,6,9], #verticals
+	[1,5,9],[7,5,3]          #diagonals
+]
 
-sol1 = [1,2,3]
-sol2 = [4,5,6]
-sol3 = [7,8,9]
-sol4 = [1,4,7]
-sol5 = [2,5,8]
-sol6 = [3,6,9]
-sol7 = [1,5,9]
-sol8 = [7,5,3]
-
-p1 = ["p1"]
-p2 = ["p2"]
-player = p1
-moves = []
+p1 = ["p1","X",RED]
+p2 = ["p2","O",BLUE]
 turn = False
+player = p1
+moves = {"p1":[],"p2":[]}
+
+def draw(p,m,b):
+	#player, move, box
+	print("drawing "+str(m)+
+	" in box "+str(b)+
+	" "+str(boxes[int(b)])+
+	" for "+str(p))
+	font = pygame.font.Font(None, 125)
+	text = font.render(player[1], True, player[2])
+	textRect = text.get_rect()
+	# textRect.center = boxes[int(b)]
+	textRect.center = (
+		int(boxes[int(b)][0] + boxsize[0]/2),
+		int(boxes[int(b)][1] + boxsize[1]/2)
+	)
+	screen.blit(text,textRect)
+	pygame.display.flip()
+	
+def winner():
+	for p in moves:
+		for solution in solutions:
+			if (str(solution[0]) in moves[p] and str(solution[1]) in moves[p] and str(solution[2]) in moves[p]):
+				print("match")
+				print(solution)
+				print(moves[p])
+				print("WIN!")
+				endgame()
+
+def endgame():
+	gameover = True
+	print("Game over. Press 0 to exit.")
+	if pygame.event.wait().unicode == '0':
+		running = False
+	print("die")
 
 pygame.init()
 screen = pygame.display.set_mode(screensize)
 running = True
 
+screen.fill(BLACK)
+for box in boxes:
+	if box != [0,0]: pygame.draw.rect(screen, GRAY, (box, boxsize), 5)
+for line in boardlines:
+	# boardline1 = [106,0],[106,320]
+	pygame.draw.line(screen, YELLOW, line[0], line[1], width=5)
+
 while running:
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			running = False
-		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_1:
-				print(player[0] + " has pressed key 1")
-				if 1 not in moves:
-					moves.append(1)
-					player.append(1)
-					turn = True
-			elif event.key == pygame.K_2:
-				print(player[0] + " has pressed key 2")
-				if 2 not in moves:
-					moves.append(2)
-					player.append(2)
-					turn = True
-			elif event.key == pygame.K_3:
-				print(player[0] + " has pressed key 3")
-				if 3 not in moves:
-					moves.append(3)
-					player.append(3)
-					turn = True
-			elif event.key == pygame.K_4:
-				print(player[0] + " has pressed key 4")
-				if 4 not in moves:
-					moves.append(4)
-					player.append(4)
-					turn = True
-			elif event.key == pygame.K_5:
-				print(player[0] + " has pressed key 5")
-				if 5 not in moves:
-					moves.append(5)
-					player.append(5)
-					turn = True
-			elif event.key == pygame.K_6:
-				print(player[0] + " has pressed key 6")
-				if 6 not in moves:
-					moves.append(6)
-					player.append(6)
-					turn = True
-			elif event.key == pygame.K_7:
-				print(player[0] + " has pressed key 7")
-				if 7 not in moves:
-					moves.append(7)
-					player.append(7)
-					turn = True
-			elif event.key == pygame.K_8:
-				print(player[0] + " has pressed key 8")
-				if 8 not in moves:
-					moves.append(8)
-					player.append(8)
-					turn = True
-			elif event.key == pygame.K_9:
-				print(player[0] + " has pressed key 9")
-				if 9 not in moves:
-					moves.append(9)
-					player.append(9)
-					turn = True
-
+		if len(moves) < 9 and event.type == pygame.KEYDOWN:
+			print(str(player[0]) + " has pressed key " + str(event.unicode) + ". ", end='')
+			if int(event.unicode) in range(1,10) and event.unicode not in moves["p1"]+moves["p2"]:
+				print("valid selection.")
+				moves[player[0]].append(event.unicode)
+				# player.append(event.unicode)
+				draw(player[0],player[1],event.unicode)
+				turn = True
+				# print("End of turn.")
+			else:
+				print("invalid selection.")
+			print("moves: "+str(moves))
+			print("p1: "+str(p1))
+			print("p2: "+str(p2))
 			if turn:
 				if player == p1: player = p2
 				else: player = p1
 				turn = False
-			
-			if len(moves) == 9: print("Game over")
-			
-		
-	
-	screen.fill(BLACK)
-	pygame.draw.rect(screen, BLACK, (box1, boxsize), 5) 
-	pygame.draw.rect(screen, BLACK, (box2, boxsize), 5) 
-	pygame.draw.rect(screen, BLACK, (box3, boxsize), 5) 
-	pygame.draw.rect(screen, BLACK, (box4, boxsize), 5) 
-	pygame.draw.rect(screen, BLACK, (box5, boxsize), 5) 
-	pygame.draw.rect(screen, BLACK, (box6, boxsize), 5) 
-	pygame.draw.rect(screen, BLACK, (box7, boxsize), 5) 
-	pygame.draw.rect(screen, BLACK, (box8, boxsize), 5) 
-	pygame.draw.rect(screen, BLACK, (box9, boxsize), 5) 
-	pygame.draw.line(screen, WHITE, boardline1[0], boardline1[1], width=5)
-	pygame.draw.line(screen, WHITE, boardline2[0], boardline2[1], width=5)
-	pygame.draw.line(screen, WHITE, boardline3[0], boardline3[1], width=5)
-	pygame.draw.line(screen, WHITE, boardline4[0], boardline4[1], width=5)
+			print(str(9 - len(moves)) + " moves left")
+			winner()
+		if len(moves["p1"])+len(moves["p2"]) == 9: 
+			endgame()
+
 	pygame.display.set_caption(player[0] + "'s turn")
-	pygame.display.update()
+	pygame.display.flip()
 pygame.quit()
+
