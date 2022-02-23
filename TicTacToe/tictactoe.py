@@ -3,16 +3,19 @@ import pygame
 pygame.font.init()
 pygame.font.get_init()
 
+doDrawBox = False
+doDebug = True
 screensize = 320,320
 width, height = screensize
 
 BLACK = (0, 0, 0)       # Background
-WHITE = (255,255,255)
+WHITE = (255,255,255)	# Labels
 GRAY = (127, 127, 127)	# Boxes
 YELLOW = (255, 255, 0)  # Board
 RED = (255, 0, 0)       # X
 BLUE = (0, 0, 255)      # O
 GREEN = (0, 255, 0)     # Win
+ORANGE = (255, 127, 0)  # CAT
 
 boxsize = 100,100
 boxes = [[0,0],#dummy box
@@ -21,39 +24,40 @@ boxes = [[0,0],#dummy box
 	[5,215],[110,215],[215,215]
 ]
 boardlines = [
-	[[106,0],[106,320]],
-	[[211,0],[211,320]],
-	[[0,107],[320,107]],
-	[[0,212],[320,212]]
+	[[106,0],[106,320]], #12-78
+	[[211,0],[211,320]], #23-89
+	[[0,107],[320,107]], #14-36
+	[[0,212],[320,212]]  #47-89
 ]
 solutions = [
 	[1,2,3],[4,5,6],[7,8,9], #horizontals
 	[1,4,7],[2,5,8],[3,6,9], #verticals
 	[1,5,9],[7,5,3]          #diagonals
 ]
-winner = [
-	[[5,55],[320,55]],
-	[[5,160],[320,160]],
-	[[5,265],[320,265]],
+winner = [               # winner index matches solution index
+	[[5,55],[320,55]],   # 123
+	[[5,160],[320,160]], # 456
+	[[5,265],[320,265]], # 789
 
-	[[55,5],[55,320]],
-	[[160,5],[160,320]],
-	[[265,5],[265,320]],
+	[[55,5],[55,320]],   # 147
+	[[160,5],[160,320]], # 258
+	[[265,5],[265,320]], # 369
 
-	[[5,5],[320,320]],
-	[[5,320],[320,5]]
+	[[5,5],[320,320]],   # 159
+	[[5,320],[320,5]]    # 753
 ]
 
 
-p1 = ["p1","X",RED]
+p1 = ["p1","X",RED]       # name, marker, color
 p2 = ["p2","O",BLUE]
-turn = False
-player = p1
-moves = {"p1":[],"p2":[]}
+turn = False			  # player toggle
+player = p1               # start with p1
+moves = {"p1":[],"p2":[]} # hold move sets
 
-def draw(p,m,b):
-	#player, move, box
-	print("drawing "+str(m)+" in box "+str(b)+" "+str(boxes[int(b)])+" for "+str(p))
+def debug(msg):
+	if doDebug: print(msg)
+
+def draw(p,m,b):          # player, move, box
 	font = pygame.font.Font(None, 125)
 	text = font.render(player[1], True, player[2])
 	textRect = text.get_rect()
@@ -61,73 +65,75 @@ def draw(p,m,b):
 	screen.blit(text,textRect)
 	pygame.display.flip()
 	
-def getWinner():
+def getWinner():          # test for winning solution
 	for p in moves:
 		for solution in solutions:
 			if (str(solution[0]) in moves[p] and str(solution[1]) in moves[p] and str(solution[2]) in moves[p]):
-				print("match")
-				print(solution)
-				print(moves[p])
-				print("WIN!")
+				debug("match")
+				debug(solution)
+				debug(moves[p])
+				debug(str(player[0]) + " WINS!")
 				pygame.draw.line(screen, GREEN, winner[solutions.index(solution)][0], winner[solutions.index(solution)][1], width=7)
 				pygame.display.flip()
 				endGame()
 
-def endGame():
-	print("Game over. Press 0 to exit.")
-	pygame.event.clear()
+def endGame():            # end of game
+	debug("Game over. Press 0 to exit.")
+	# pygame.event.clear()  # I think there's a way to buffer overflow event and crash
 	while True:
 		for event in pygame.event.get():
 			if event.type == pygame.KEYDOWN and event.unicode == '0':
 				global running
 				running = False
-				print("die")
 				return
 
-pygame.init()
+pygame.init()             # Let's go
 screen = pygame.display.set_mode(screensize)
 running = True
 
 screen.fill(BLACK)
-for box in boxes: # and labels
-	if box != [0,0]: 
-		pygame.draw.rect(screen, GRAY, (box, boxsize), 5)
+for box in boxes:         # draw play boxes and labels
+	if box != [0,0]:      # dummy box to increment index
+		if doDrawBox: pygame.draw.rect(screen, GRAY, (box, boxsize), 5)
 		font = pygame.font.Font(None, 25)
 		labelText = font.render(str(boxes.index(box)), True, WHITE)
 		labelRect = labelText.get_rect()
 		labelRect.center = (box[0]+15, box[1]+15)
 		screen.blit(labelText,labelRect)
 
-for line in boardlines:
+for line in boardlines:   # draw game board
 	pygame.draw.line(screen, YELLOW, line[0], line[1], width=5)
 
 while running:
-	pygame.time.Clock().tick(15)
+	pygame.time.Clock().tick(15) # slow down
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			running = False
 		if len(moves) < 9 and event.type == pygame.KEYDOWN:
-			print(str(player[0]) + " has pressed key " + str(event.unicode) + ". ", end='')
-			if int(event.unicode) in range(1,10) and event.unicode not in moves["p1"]+moves["p2"]:
-				print("valid selection.")
+			# debug(str(player[0]) + " has pressed key " + str(event.unicode) + ". ", end='')
+			if event.unicode.isnumeric() and event.unicode not in moves["p1"]+moves["p2"] and event.unicode != '0':
+				# debug("valid selection.")
 				moves[player[0]].append(event.unicode)
 				draw(player[0],player[1],event.unicode)
 				turn = True
 			else:
-				print("invalid selection.")
-			print("moves: "+str(moves))
-			print("p1: "+str(p1))
-			print("p2: "+str(p2))
+				debug("invalid selection.")
+			for p in moves: debug(str(player[0]) + " moves: "+str(moves[p]))
+			# debug("p1: "+str(p1))
+			# debug("p2: "+str(p2))
 			if turn:
 				if player == p1: player = p2
 				else: player = p1
 				turn = False
-			print(str(9-len(moves["p1"]+moves["p2"])) + " moves left")
+			debug(str(9-len(moves["p1"]+moves["p2"])) + " moves left")
 			getWinner()
-		if len(moves["p1"])+len(moves["p2"]) == 9: 
+		if len(moves["p1"])+len(moves["p2"]) == 9:
+			pygame.display.set_caption("CATCATCATCATCATCATCATCAT")
+			for solution in solutions:
+				pygame.draw.line(screen, ORANGE, winner[solutions.index(solution)][0], winner[solutions.index(solution)][1], width=7)
+				pygame.display.flip()
 			endGame()
 
 	pygame.display.set_caption(player[0] + "'s turn")
 	pygame.display.flip()
-print("stop")
 pygame.quit()
