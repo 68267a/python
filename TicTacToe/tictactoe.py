@@ -2,7 +2,6 @@ import pygame
 
 pygame.font.init()
 pygame.font.get_init()
-pygame.time.Clock().tick(30)
 
 screensize = 320,320
 width, height = screensize
@@ -32,6 +31,19 @@ solutions = [
 	[1,4,7],[2,5,8],[3,6,9], #verticals
 	[1,5,9],[7,5,3]          #diagonals
 ]
+winner = [
+	[[5,55],[320,55]],
+	[[5,160],[320,160]],
+	[[5,265],[320,265]],
+
+	[[55,5],[55,320]],
+	[[160,5],[160,320]],
+	[[265,5],[265,320]],
+
+	[[5,5],[320,320]],
+	[[5,320],[320,5]]
+]
+
 
 p1 = ["p1","X",RED]
 p2 = ["p2","O",BLUE]
@@ -41,22 +53,15 @@ moves = {"p1":[],"p2":[]}
 
 def draw(p,m,b):
 	#player, move, box
-	print("drawing "+str(m)+
-	" in box "+str(b)+
-	" "+str(boxes[int(b)])+
-	" for "+str(p))
+	print("drawing "+str(m)+" in box "+str(b)+" "+str(boxes[int(b)])+" for "+str(p))
 	font = pygame.font.Font(None, 125)
 	text = font.render(player[1], True, player[2])
 	textRect = text.get_rect()
-	# textRect.center = boxes[int(b)]
-	textRect.center = (
-		int(boxes[int(b)][0] + boxsize[0]/2),
-		int(boxes[int(b)][1] + boxsize[1]/2)
-	)
+	textRect.center = (int(boxes[int(b)][0] + boxsize[0]/2),int(boxes[int(b)][1] + boxsize[1]/2))
 	screen.blit(text,textRect)
 	pygame.display.flip()
 	
-def winner():
+def getWinner():
 	for p in moves:
 		for solution in solutions:
 			if (str(solution[0]) in moves[p] and str(solution[1]) in moves[p] and str(solution[2]) in moves[p]):
@@ -64,27 +69,40 @@ def winner():
 				print(solution)
 				print(moves[p])
 				print("WIN!")
-				endgame()
+				pygame.draw.line(screen, GREEN, winner[solutions.index(solution)][0], winner[solutions.index(solution)][1], width=7)
+				pygame.display.flip()
+				endGame()
 
-def endgame():
-	gameover = True
+def endGame():
 	print("Game over. Press 0 to exit.")
-	if pygame.event.wait().unicode == '0':
-		running = False
-	print("die")
+	pygame.event.clear()
+	while True:
+		for event in pygame.event.get():
+			if event.type == pygame.KEYDOWN and event.unicode == '0':
+				global running
+				running = False
+				print("die")
+				return
 
 pygame.init()
 screen = pygame.display.set_mode(screensize)
 running = True
 
 screen.fill(BLACK)
-for box in boxes:
-	if box != [0,0]: pygame.draw.rect(screen, GRAY, (box, boxsize), 5)
+for box in boxes: # and labels
+	if box != [0,0]: 
+		pygame.draw.rect(screen, GRAY, (box, boxsize), 5)
+		font = pygame.font.Font(None, 25)
+		labelText = font.render(str(boxes.index(box)), True, WHITE)
+		labelRect = labelText.get_rect()
+		labelRect.center = (box[0]+15, box[1]+15)
+		screen.blit(labelText,labelRect)
+
 for line in boardlines:
-	# boardline1 = [106,0],[106,320]
 	pygame.draw.line(screen, YELLOW, line[0], line[1], width=5)
 
 while running:
+	pygame.time.Clock().tick(15)
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			running = False
@@ -93,10 +111,8 @@ while running:
 			if int(event.unicode) in range(1,10) and event.unicode not in moves["p1"]+moves["p2"]:
 				print("valid selection.")
 				moves[player[0]].append(event.unicode)
-				# player.append(event.unicode)
 				draw(player[0],player[1],event.unicode)
 				turn = True
-				# print("End of turn.")
 			else:
 				print("invalid selection.")
 			print("moves: "+str(moves))
@@ -106,12 +122,12 @@ while running:
 				if player == p1: player = p2
 				else: player = p1
 				turn = False
-			print(str(9 - len(moves)) + " moves left")
-			winner()
+			print(str(9-len(moves["p1"]+moves["p2"])) + " moves left")
+			getWinner()
 		if len(moves["p1"])+len(moves["p2"]) == 9: 
-			endgame()
+			endGame()
 
 	pygame.display.set_caption(player[0] + "'s turn")
 	pygame.display.flip()
+print("stop")
 pygame.quit()
-
