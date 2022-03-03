@@ -1,31 +1,26 @@
 import os
 from PIL import Image # Pillow module
 
-DPI = 300 # dots per inch. 300 default
+DPI = 360 # dots per inch. 300 default
 LPI = 60  # lines per inch, taken from the lens design
 
 # Conversions
 # length[mm] = pixel * 25.4mm (1 in) / dpi
 # pixel = dpi * mm / 25.4 mm (1 in)
 # dpi = pixel * 25.4 mm (1 in) / mm
-i2cm = 25.4 #inch to cm
-DPcm = DPI / i2cm # Dots per cm  (=11.8110236220472)
-LPcm = LPI / i2cm # lines per cm (=2.36220472440945)
-stripwidth = LPcm
-# stripwidth = 10
+# i2cm = 25.4 #inch to cm
+# DPcm = DPI / i2cm # Dots per cm  () # WHY?
+# LPcm = LPI / i2cm # lines per cm () # WHY?
 
-ima = Image.open(r"batman.png")
-imb = Image.open(r"darthvader.png")
-outfile = 'batvader_' + str(stripwidth) + '.png'
-
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
-# imb = ima.transpose(method=Image.FLIP_LEFT_RIGHT)
-# imb.save('colorsflipped.png')
+ima = Image.open(r"black.png")
+imb = Image.open(r"white.png")
 width, height = ima.size
-# 60 LPI
-# 300 PPI
+stripwidth = 10
 numstrips = round(width/stripwidth)
 
+
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+outfile = 'batvader_' + str(stripwidth) + '.png'
 print("width " + str(width)+ " stripwidth " + str(stripwidth))
 strip = 0
 h = height
