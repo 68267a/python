@@ -21,9 +21,7 @@ Where `/` is image A and `\` is image B. Because of the size of the print, only 
 Recent technology allows us to print the strips much smaller, and directly onto a transparent plastic lens, making these images handheld. These lenses are available in many configurations - the most common of which is 60LPI, or Lines Per Inch. This means that for each inch of printed image, there are 60 lines (or strips) of photo.
 
 ## How big is each strip?
-
 That's the tricky part - It depends on the size of the images, the resolution of the printer, the LPI of the lens, and other factors. Simply put, IDFK.
-
 
 ### Lenses
 
@@ -41,8 +39,26 @@ In this folder I have multiple sample images. The end goal of this project is to
 The batman/darth vader images are 3218x4096. Since this is a horizontal flip, the height doesn't matter so much. Unfortunately 3218/60=53.633, not a whole number. This means that the image must be resized to fit the lens, but we do not want to alter the original 1609:2048 aspect ratio too much because it would appear stretched.
 
 ### DPI vs PPI
-> DPI: Dots Per Inch - for physical prints
+> DPI: Dots Per Inch - for physical prints. Higher number = better quality.
 
-> PPI: Pixels Per Inch - for digital images
+> PPI: Pixels Per Inch - for digital images. Higher number = larger image.
 
-In both cases, a higher number means better quality. Generally, 300 is acceptable.
+Generally 300 is acceptable for both. To get the size of the physical print, divide the resolution by the DPI:
+
+* 3218 / 300 = 10.73
+* 4096 / 300 = 13.65
+
+[Better explanation here](https://photographylife.com/dpi-vs-ppi).
+
+### Ok, but how big is each strip?
+I want the print to be approximately 5x7, which is half the size that we have at 300 DPI, so we'll use 600 instead:
+
+* w = 3218 / 600 = 5.36
+* h = 4096 / 600 = 6.83
+
+5.36" * 60 LPI = 321.6 Lines. 
+3218 px / 321.6 lines = 10.006 pixels per line.
+
+Therefore the equation is `width / (width / DPI * LPI)`
+
+Probably.

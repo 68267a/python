@@ -1,35 +1,32 @@
 import os
 from PIL import Image # Pillow module
 
-DPI = 360 # dots per inch. 300 default
+DPI = 600 # dots per inch. 300 default
 LPI = 60  # lines per inch, taken from the lens design
 
-# Conversions
-# length[mm] = pixel * 25.4mm (1 in) / dpi
-# pixel = dpi * mm / 25.4 mm (1 in)
-# dpi = pixel * 25.4 mm (1 in) / mm
-# i2cm = 25.4 #inch to cm
-# DPcm = DPI / i2cm # Dots per cm  () # WHY?
-# LPcm = LPI / i2cm # lines per cm () # WHY?
+ima = Image.open(r"batman.png")
+imb = Image.open(r"darthvader.png")
+outfile = 'batvader'
 
-ima = Image.open(r"black.png")
-imb = Image.open(r"white.png")
-width, height = ima.size
-stripwidth = 10
-numstrips = round(width/stripwidth)
+if ima.width != imb.width or ima.height != imb.height:
+	print('ERROR: Please choose images that are the same size')
+	raise SystemExit
 
+stripwidth = int(ima.width / (ima.width / DPI * LPI))
+numstrips = ima.width / stripwidth
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
-outfile = 'batvader_' + str(stripwidth) + '.png'
-print("width " + str(width)+ " stripwidth " + str(stripwidth))
+outfile += "_" + str(DPI) + "-" + str(stripwidth) + '.png'
+print("file: " + outfile + "\nwidth: " + str(2*ima.width)+ "\nstripwidth: " + str(stripwidth) + "\nnumstrips: " + str(numstrips))
+
 strip = 0
-h = height
+h = ima.height
 x = 0
 y = stripwidth
 
-imgOut = Image.new("RGB", (width, height), "black")
+imgOut = Image.new("RGB", (ima.width, ima.height), "black")
 while strip < numstrips:
-	print("strip" + str(strip) + " x" + str(x) + " y" + str(y))
+	# print("strip" + str(strip) + " x" + str(x) + " y" + str(y))
 	strip_a = ima.crop((x,0,y,h))
 	strip_b = imb.crop((x,0,y,h))
 	imgOut.paste(strip_a,(x,0))
@@ -38,5 +35,6 @@ while strip < numstrips:
 	y=y+stripwidth+stripwidth
 	strip += 1
 
-
 imgOut.save(outfile)
+ima.close
+imb.close
