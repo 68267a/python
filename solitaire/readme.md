@@ -16,3 +16,5 @@ The goal of this project is to create a self-dealing, and self-solving game of k
 * Art
   * Generated
   * files
+
+Switch to solitaire branch
