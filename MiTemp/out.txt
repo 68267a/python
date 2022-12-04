@@ -1,0 +1,32 @@
+---------------------------------------------
+MiTemperature2 / ATC Thermometer version 5.0
+---------------------------------------------
+
+
+Please read README.md in this folder. Latest version is available at https://github.com/JsBergbau/MiTemperature2#readme
+This file explains very detailed about the usage and covers everything you need to know as user.
+
+
+Script started in passive mode
+------------------------------
+In this mode all devices within reach are read out, unless a devicelistfile and --onlydevicelist is specified.
+Also --name Argument is ignored, if you require names, please use --devicelistfile.
+In this mode debouncing is not available. Rounding option will round humidity and temperature to one decimal place.
+Passive mode usually requires root rights. If you want to use it with normal user rights,
+please execute "sudo setcap cap_net_raw,cap_net_admin+eip $(eval readlink -f `which python3`)"
+You have to redo this step if you upgrade your python version.
+----------------------------
+Power ON bluetooth device 0
+Bluetooth device 0 is already enabled
+Enable LE scan
+scan params: interval=1280.000ms window=1280.000ms own_bdaddr=public whitelist=no
+socket filter set to ptype=HCI_EVENT_PKT event=LE_META_EVENT
+Listening ...
+BLE packet - ATC1441: A4:C1:38:AB:2A:9A 00 1110161a18a4c138ab2a9a02bf3a4a0b3eae -69
+Temperature:  70.3
+Humidity:  58
+Battery voltage: 2.878 V
+RSSI: -69 dBm
+Battery: 74 %
+Count: 0
+0 measurements colected. Exiting in a moment.
