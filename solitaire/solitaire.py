@@ -32,16 +32,16 @@ cardsuits = {
 }
 
 smallfont = pygame.font.SysFont('Corbel',25)
-btnSize = 100,40
-btnPad = 20,20
+btnSize = 120,40
+btnPad = 10,10
 text = smallfont.render('quit' , True , WHITE)
 btnQuit = smallfont.render('Quit', True, WHITE)
 btnShuffle = smallfont.render('Shuffle', True, WHITE)
 btnUnshuffle = smallfont.render('Unshuffle', True, WHITE)
 btnLocs = {
 	"A":(20,20),
-	"B":(140,20),
-	"C":(260,20)
+	"B":(20,80),
+	"C":(20,140)
 }
 btns = (btnQuit, btnShuffle, btnUnshuffle)
 
@@ -66,11 +66,11 @@ def main():
 				debug("mouseclick")					
 		mouse = pygame.mouse.get_pos()
 		pygame.draw.rect(screen,GRAY,[btnLocs["A"],btnSize])
-		screen.blit(btns[0], (btnLocs["A"]))
+		screen.blit(btns[0], tuple(map(lambda i,j:i+j,btnLocs["A"], btnPad)))
 		pygame.draw.rect(screen,GRAY,[btnLocs["B"],btnSize])
-		screen.blit(btns[1], (btnLocs["B"]))
+		screen.blit(btns[1], tuple(map(lambda i,j:i+j,btnLocs["B"], btnPad)))
 		pygame.draw.rect(screen,GRAY,[btnLocs["C"],btnSize])
-		screen.blit(btns[2], (btnLocs["C"]))
+		screen.blit(btns[2], tuple(map(lambda i,j:i+j,btnLocs["C"], btnPad)))
 		pygame.display.flip()
 	pygame.quit()
 
