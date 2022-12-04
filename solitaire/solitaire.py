@@ -31,11 +31,26 @@ cardsuits = {
 	"black": ("clubs","spades")
 }
 
+smallfont = pygame.font.SysFont('Corbel',25)
+btnSize = 100,40
+btnPad = 20,20
+text = smallfont.render('quit' , True , WHITE)
+btnQuit = smallfont.render('Quit', True, WHITE)
+btnShuffle = smallfont.render('Shuffle', True, WHITE)
+btnUnshuffle = smallfont.render('Unshuffle', True, WHITE)
+btnLocs = {
+	"A":(20,20),
+	"B":(140,20),
+	"C":(260,20)
+}
+btns = (btnQuit, btnShuffle, btnUnshuffle)
+
 def debug(msg):
     if doDebug: print(msg)
 
+# Let's go
 def main():
-	pygame.init()             # Let's go
+	pygame.init()
 	screen = pygame.display.set_mode(screensize)
 	running = True
 	screen.fill(background)
@@ -43,9 +58,19 @@ def main():
 	while running:
 		pygame.time.Clock().tick(15) # slow down
 		for event in pygame.event.get():
+			debug(event)
 			if event.type == pygame.QUIT:
 				running = False
-			debug(event)
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				# if width/2 <= mouse[0] <= width/2+140 and height/2 <= mouse[1] <= height/2+40:
+				debug("mouseclick")					
+		mouse = pygame.mouse.get_pos()
+		pygame.draw.rect(screen,GRAY,[btnLocs["A"],btnSize])
+		screen.blit(btns[0], (btnLocs["A"]))
+		pygame.draw.rect(screen,GRAY,[btnLocs["B"],btnSize])
+		screen.blit(btns[1], (btnLocs["B"]))
+		pygame.draw.rect(screen,GRAY,[btnLocs["C"],btnSize])
+		screen.blit(btns[2], (btnLocs["C"]))
 		pygame.display.flip()
 	pygame.quit()
 
