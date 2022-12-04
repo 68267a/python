@@ -18,3 +18,4 @@ The goal of this project is to create a self-dealing, and self-solving game of k
   * files
 
 Switch to solitaire branch
+test
