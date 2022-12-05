@@ -1,91 +1,88 @@
 import pygame
+pygame.init()
 
-pygame.font.init()
-pygame.font.get_init()
-
-doDrawBox = False
 doDebug = True
-screensize = 540,540
-width, height = screensize
+is_running = True
 
-BLACK = (0, 0, 0)        # 
-WHITE = (255,255,255)    # 
-GRAY = (127, 127, 127)   # 
-YELLOW = (255, 255, 0)   # 
-RED = (255, 0, 0)        # 
-BLUE = (0, 0, 255)       # 
-GREEN = (0, 255, 0)      # 
-ORANGE = (255, 127, 0)   # 
-DARKGREEN = (24, 120, 74)#
-background = DARKGREEN
+WIDTH = 1024
+HEIGHT = 768
+BLACK=(0,0,0)
+WHITE=(255,255,255)
+GRAY=(127,127,127)
+RED=(255,0,0)
+DARKGREEN=(20,120,74)
 
-cardsize = {"h":64, "w":89, "v":16} # width, height, vertical offset
-cardfont = (None, 12)
-cardvalues = {
-	"A": 1,	"2": 2,	"3": 3,	"4": 4,	"5": 5,
-	"6": 6,	"7": 7,	"8": 8,	"9": 9,	"10": 10,
-	"J": 11,"Q": 12, "K": 13
-}
-cardsuits = {
-	"red": ("hearts","diamonds"),
-	"black": ("clubs","spades")
-}
-
-smallfont = pygame.font.SysFont('Corbel',25)
-btnSize = 120,40
-btnPad = 10,10
-text = smallfont.render('quit' , True , WHITE)
-btnQuit = smallfont.render('Quit', True, WHITE)
-btnShuffle = smallfont.render('Shuffle', True, WHITE)
-btnUnshuffle = smallfont.render('Unshuffle', True, WHITE)
-btnLocs = {
-	"A":(20,20),
-	"B":(20,80),
-	"C":(20,140)
-}
-btns = (btnQuit, btnShuffle, btnUnshuffle)
+SCREEN = pygame.display.set_mode((WIDTH,HEIGHT))
+SCREEN.fill(DARKGREEN)
+pygame.display.set_caption('Solitaire 0P')
+pygame.display.flip()
+gamefont = pygame.font.SysFont('Corbel',25)
 
 def debug(msg):
     if doDebug: print(msg)
 
-# Let's go
-def main():
-	pygame.init()
-	screen = pygame.display.set_mode(screensize)
-	running = True
-	screen.fill(background)
-	debug("what now")
-	while running:
-		pygame.time.Clock().tick(15) # slow down
-		for event in pygame.event.get():
-			debug(event)
-			if event.type == pygame.QUIT:
-				running = False
-			if event.type == pygame.MOUSEBUTTONDOWN:
-				# if width/2 <= mouse[0] <= width/2+140 and height/2 <= mouse[1] <= height/2+40:
-				debug("mouseclick")					
-		mouse = pygame.mouse.get_pos()
-		pygame.draw.rect(screen,GRAY,[btnLocs["A"],btnSize])
-		screen.blit(btns[0], tuple(map(lambda i,j:i+j,btnLocs["A"], btnPad)))
-		pygame.draw.rect(screen,GRAY,[btnLocs["B"],btnSize])
-		screen.blit(btns[1], tuple(map(lambda i,j:i+j,btnLocs["B"], btnPad)))
-		pygame.draw.rect(screen,GRAY,[btnLocs["C"],btnSize])
-		screen.blit(btns[2], tuple(map(lambda i,j:i+j,btnLocs["C"], btnPad)))
-		pygame.display.flip()
-	pygame.quit()
+def shuffle():
+	debug("shfuffufuufle")
 
+def newgame():
+	debug("newgame")
 
+def endgame():
+	debug("endgame")
 
-def endGame():            # end of game
-    debug("Game over. Press 0 to exit.")
-    # pygame.event.clear() # I think there's a way to buffer overflow event and crash
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN and event.unicode == '0':
-                global running
-                running = False
-                return
+def buildButton(lx,ly,sx,sy,txt):
+	'''
+	TL	px,		py
+	TR	px+sx	py+sy
+	BL	px,		py+sy
+	BR	px+sx	py+sy
+	LBL	px+TLx,	py+TLy
+	'''
+	location = (lx,ly)
+	padding = (10,10)
+	size = (sx,sy)
+	labeloffset = (10,10)
+	coords = {
+		"TL": (location[0]+padding[0]         , location[1]+padding[1]),
+		"TR": (location[0]+padding[0]+size[0] , location[1]+padding[1]+size[1]),
+		"BL": (location[0]+padding[0]         , location[1]+padding[1]+size[1]),
+		"BR": (location[0]+padding[0]+size[0] , location[1]+padding[1]+size[1]),
+	}
+	lbl = (
+		location[0]+padding[0]+labeloffset[0],
+		location[1]+padding[1]+labeloffset[1]
+	)
 
+	text = gamefont.render(txt,True,WHITE)
+	out = {
+		"location": location,
+		"size": size,
+		"padding": padding,
+		"text": text,
+		"coords": coords,
+		"label": lbl
+	}
+	return out
 
-if __name__ == "__main__":
-	main()
+while is_running:
+	mouse = pygame.mouse.get_pos()
+	btnQuit = buildButton(0,0,90,40,"Quit") # Each button's TL is next to the previous TR
+	btnShuffle = buildButton(btnQuit["coords"]["TR"][0],0,90,40,"Shuffle")
+	btnNewGame = buildButton(btnShuffle["coords"]["TR"][0],0,140,40,"New Game") # new game
+	for button in (btnQuit, btnShuffle, btnNewGame):
+		pygame.draw.rect(
+			SCREEN,
+			GRAY,
+			(button["coords"]["TL"],button["size"])
+		)
+		SCREEN.blit(button["text"],button['label'])
+
+	for event in pygame.event.get():
+		debug(event)
+		if event.type == pygame.QUIT:
+			is_running = False
+		if event.type == pygame.MOUSEBUTTONDOWN:
+			debug("mouseclick"+ str(mouse))
+			#TODO: compare mouse[0] and mouse[1] to each button's coords - return that button's name and fire the function
+	pygame.display.flip()
+pygame.quit()
