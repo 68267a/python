@@ -18,4 +18,6 @@ The goal of this project is to create a self-dealing, and self-solving game of k
   * files
 
 Switch to solitaire branch
-test
+
+![mockup.png](mockup.png)
+![deal 1](2022-12-07%2001_12_53-shuffle%20and%20deal%201.png)
