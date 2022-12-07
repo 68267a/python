@@ -28,7 +28,9 @@ pygame.display.flip()
 gamefont = pygame.font.SysFont('Corbel', 25)
 
 shuffled = False
-dealt = True
+dealt = False
+
+
 
 def debug(msg):
 	if doDebug: print(msg)
@@ -145,7 +147,7 @@ while is_running:
 				debug("Found new game button")
 			else:
 				debug("nothing")
-		if shuffled and dealt:
+		if shuffled and not dealt:
 		# 	debug("build AH")
 			card = buildcard(
 				deck[0][0],     # value
