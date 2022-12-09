@@ -10,7 +10,7 @@ WIDTH = 1024
 HEIGHT = 768
 MENU = (0, HEIGHT - 60)
 CARDASPECT = 1.4
-CARDX = 150
+CARDX = 120
 CARDY = CARDX * CARDASPECT
 CARD = (CARDX,CARDY)
 BLACK = (0,0,0)
@@ -110,10 +110,28 @@ def shuffledeck():
 	shuffled = True
 	return deck
 
-def buildcard(v,s,fg):  #value, suit, fg, bg
+def buildcard(x, y, v,s,fg):  #value, suit, fg, bg
 	face = str(v) + str(s)
 	# debug(face)
-	return buildbutton(0, 0, CARD[0], CARD[1], face, fg, WHITE)
+	return buildbutton(x, y, CARD[0], CARD[1], face, fg, WHITE)
+
+def buildgame():
+	padding = 15
+	toprow = [15, 150, 285, 420, 555, 690, 825]
+	# toprow = [120-padding, (2*120)+padding, (3*120=)+padding, (4*120)+padding]
+
+	for x in range(len(toprow)):
+		card = buildcard(
+			toprow[x],
+			30,
+			x+1,
+			# deck[x][0],     # value
+			deck[x][1][0],  # suit
+			deck[x][1][1],  # color
+		)
+		debug("toprow" + str(toprow))
+		displaybutton(card)
+
 
 while is_running:
 	mouse = pygame.mouse.get_pos()
@@ -149,12 +167,6 @@ while is_running:
 				debug("nothing")
 		if shuffled and not dealt:
 		# 	debug("build AH")
-			card = buildcard(
-				deck[0][0],     # value
-				deck[0][1][0],  # suit
-				deck[0][1][1],  # color
-			)
-			displaybutton(card)
-
+			buildgame()
 	pygame.display.flip()
 pygame.quit()
