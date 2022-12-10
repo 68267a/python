@@ -117,20 +117,25 @@ def buildcard(x, y, v,s,fg):  #value, suit, fg, bg
 
 def buildgame():
 	padding = 15
-	toprow = [15, 150, 285, 420, 555, 690, 825]
-	# toprow = [120-padding, (2*120)+padding, (3*120=)+padding, (4*120)+padding]
-
-	for x in range(len(toprow)):
-		card = buildcard(
-			toprow[x],
-			30,
-			x+1,
-			# deck[x][0],     # value
-			deck[x][1][0],  # suit
-			deck[x][1][1],  # color
-		)
-		debug("toprow" + str(toprow))
-		displaybutton(card)
+	cols = [ 0*CARDX+1*padding, 
+		1*CARDX+2*padding, 2*CARDX+3*padding, 3*CARDX+4*padding, 
+		4*CARDX+5*padding, 5*CARDX+6*padding, 6*CARDX+7*padding
+	]
+	col1 = cols.copy()
+	del col1[2]
+	rows = [ padding, CARDY+2*padding, CARDY+4*padding]
+	for col in (col1, rows[0]), (cols, rows[1]), (cols, rows[2]):
+		for x in range(len(col[0])):
+			card = buildcard(
+				col[0][x],
+				col[1],
+				x+1,
+				# deck[x][0],     # value
+				deck[x][1][0],  # suit
+				deck[x][1][1],  # color
+			)
+			debug("col" + str(col[0]))
+			displaybutton(card)
 
 
 while is_running:
