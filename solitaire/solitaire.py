@@ -39,22 +39,22 @@ def buildset():
     # take the shuffled deck and place cards in position
 	debug("buildcards")
 	# row1
-	drawpile = 10,10
-	playpile = 140,10
-	blank = 270,10
-	ace1 = 400,10
-	ace2 = 530,10
-	ace3 = 660,10
-	ace4 = 790,10
+	drawpile = 10,10,None
+	playpile = 140,10,None
+	blank = 270,10,None
+	ace1 = 400,10,None
+	ace2 = 530,10,None
+	ace3 = 660,10,None
+	ace4 = 790,10,None
 
-	# row2		
-	c1 = 10,188
-	c2 = 140,188
-	c3 = 270,188
-	c4 = 400,188
-	c5 = 530,188
-	c6 = 660,188
-	c7 = 790,188
+	# row2
+	c1 = 10,188,None
+	c2 = 140,188,None
+	c3 = 270,188,None
+	c4 = 400,188,None
+	c5 = 530,188,None
+	c6 = 660,188,None
+	c7 = 790,188,None
     
 	for card in DECK:
 		debug(card)
