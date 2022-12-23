@@ -3,6 +3,7 @@ import random
 pygame.init()
 
 doDebug = True
+# doDebug = False
 def debug(msg):
     if doDebug: print("Debug " + str(msg))
 
@@ -40,7 +41,7 @@ def buildset():
 		"A♦","2♦","3♦","4♦","5♦","6♦","7♦","8♦","9♦","10♦","J♦","Q♦","K♦",
 		"A♣","2♣","3♣","4♣","5♣","6♣","7♣","8♣","9♣","10♣","J♣","Q♣","K♣"
 	]
-	# random.shuffle(DECK)
+	random.shuffle(DECK)
 	slots = { # horizontal, vertical
 		0 : (row[1], col[0], DECK[ 0], "u"),
 		1 : (row[1], col[1], DECK[ 1], "d"),
@@ -110,8 +111,7 @@ def drawset(set):
 				set[card][1],set[card][0],CARDSIZE[0],CARDSIZE[1]),0,15
 			)
 		elif state == 'd':
-			text = str(set[card][2])
-			# text = 'reverse'
+			text = str(set[card][2]) if doDebug == True else 'reverse'
 			pygame.draw.rect(SCREEN,COLOR["gray"],(
 				set[card][1],set[card][0],CARDSIZE[0],CARDSIZE[1]),0,15
 			)
@@ -144,6 +144,8 @@ def text_display(text,color,coords):
 	SCREEN.blit(TextSurf, TextRect)
 	pygame.display.update()
 
+def selectcard(mouse):
+	debug("selectcard "+str(mouse))
 
 def newgame():
     debug("newgame")
@@ -164,6 +166,7 @@ def gameloop():
 				is_running = False
 			if event.type == pygame.MOUSEBUTTONDOWN:
 				debug("mouseclick " + str(mouse))
+				selectcard(mouse)
 		pygame.display.update()
 		clock.tick(25)
 
