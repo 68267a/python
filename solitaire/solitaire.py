@@ -20,7 +20,7 @@ COLOR = {
 }
 
 CARDSIZE = 120, 120*1.4
-PADDING = 20,10
+PADDING = 35,10
 MENUAREA = 0, SCREENSIZE[1] - 60
 SCREEN = pygame.display.set_mode(SCREENSIZE)
 pygame.display.set_caption("Solitaire 0P")
@@ -29,16 +29,16 @@ SCREEN.fill(COLOR["darkgreen"])
 def buildset():
 	debug("buildset")
 
-	row = [i for i in (PADDING[0],) + tuple([i for i in range(200,1000,PADDING[0])])]
+	row = [i for i in (PADDING[0],) + tuple([i for i in range(225,1000,PADDING[0])])]
 	col = [i for i in (tuple([i for i in range(PADDING[1],800,130)]))]
 	# 28 slots, 1+2+3+4+5+6+7 rows
 	# slot = (row, col, value, state)
 
 	DECK = [
 		"A♥","2♥","3♥","4♥","5♥","6♥","7♥","8♥","9♥","10♥","J♥","Q♥","K♥",
+		"A♠","2♠","3♠","4♠","5♠","6♠","7♠","8♠","9♠","10♠","J♠","Q♠","K♠",
 		"A♦","2♦","3♦","4♦","5♦","6♦","7♦","8♦","9♦","10♦","J♦","Q♦","K♦",
-		"A♣","2♣","3♣","4♣","5♣","6♣","7♣","8♣","9♣","10♣","J♣","Q♣","K♣",
-		"A♠","2♠","3♠","4♠","5♠","6♠","7♠","8♠","9♠","10♠","J♠","Q♠","K♠"
+		"A♣","2♣","3♣","4♣","5♣","6♣","7♣","8♣","9♣","10♣","J♣","Q♣","K♣"
 	]
 	# random.shuffle(DECK)
 	slots = { # horizontal, vertical
@@ -103,10 +103,33 @@ def drawset(set):
 	# debug(set)
 	for card in set:
 		debug(set[card])
-		pygame.draw.rect(SCREEN,COLOR["white"],(
-			set[card][1],set[card][0],CARDSIZE[0],CARDSIZE[1])
+		state = set[card][3]
+		if state == 'u':
+			text = str(set[card][2])
+			pygame.draw.rect(SCREEN,COLOR["white"],(
+				set[card][1],set[card][0],CARDSIZE[0],CARDSIZE[1]),0,15
+			)
+		elif state == 'd':
+			text = str(set[card][2])
+			# text = 'reverse'
+			pygame.draw.rect(SCREEN,COLOR["gray"],(
+				set[card][1],set[card][0],CARDSIZE[0],CARDSIZE[1]),0,15
+			)
+		elif state == 'e':
+			text = 'empty'
+			pygame.draw.rect(SCREEN,COLOR["gray"],(
+				set[card][1],set[card][0],CARDSIZE[0],CARDSIZE[1]),2,15
+			)
+		
+		pygame.draw.rect(SCREEN,COLOR["gold"],(
+			set[card][1],set[card][0],CARDSIZE[0],CARDSIZE[1]),2,15
 		)
-		text_display(set[card][2], COLOR["black"], (set[card][1]+5,set[card][0]+5))
+		# print('♥♦♣♠')
+		color = COLOR["black"]
+		if '♥' in text or '♦' in text:
+			color = COLOR["red"]
+		
+		text_display(text, color, (set[card][1]+5,set[card][0]+5))
 		pygame.display.update()
 
 def text_objects(text, font, color):
@@ -115,7 +138,7 @@ def text_objects(text, font, color):
 	return textSurface, textSurface.get_rect()
 
 def text_display(text,color,coords):
-	gamefont = pygame.font.SysFont('Corbel',25)
+	gamefont = pygame.font.SysFont('Impact',25)
 	TextSurf, TextRect = text_objects(text, gamefont, color)
 	TextRect.topleft = (coords)
 	SCREEN.blit(TextSurf, TextRect)
