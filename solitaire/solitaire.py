@@ -144,8 +144,11 @@ def text_display(text,color,coords):
 	SCREEN.blit(TextSurf, TextRect)
 	pygame.display.update()
 
-def selectcard(mouse):
+def selectcard(mouse, game):
 	debug("selectcard "+str(mouse))
+	for card in game:
+		if game[card][0] <= mouse[0] <= game[card][0]+CARDSIZE[0] and game[card][1] < mouse[1] < game[card][1]+CARDSIZE[1]:
+			print("inside topleft " + game[card][2])
 
 def newgame():
     debug("newgame")
@@ -165,8 +168,8 @@ def gameloop():
 			if event.type == pygame.QUIT:
 				is_running = False
 			if event.type == pygame.MOUSEBUTTONDOWN:
-				debug("mouseclick " + str(mouse))
-				selectcard(mouse)
+				# debug("mouseclick " + str(mouse))
+				selectcard(mouse, game)
 		pygame.display.update()
 		clock.tick(25)
 
